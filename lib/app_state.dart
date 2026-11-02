@@ -85,7 +85,7 @@ String fmtCountdown(Duration d) {
   return '${two(h)}:${two(m)}:${two(s)}';
 }
 
-// ───────────────────────── Bunk calculator maths ─────────────────────────
+// ───────────────────────── Attendance Manager maths ─────────────────────────
 
 int safeBunks(int attended, int total, double target) {
   if (target <= 0) return 999;

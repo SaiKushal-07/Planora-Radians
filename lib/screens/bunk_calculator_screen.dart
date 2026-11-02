@@ -45,7 +45,7 @@ class _BunkCalculatorScreenState extends State<BunkCalculatorScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Bunk Calculator')),
+      appBar: AppBar(title: const Text('Attendance Manager')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 720),

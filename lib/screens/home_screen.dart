@@ -177,7 +177,7 @@ class HomeScreen extends StatelessWidget {
               MaterialPageRoute(builder: (_) => const BunkCalculatorScreen()),
             ),
             icon: const Icon(Icons.calculate_rounded),
-            label: const Text('Open Bunk Calculator'),
+            label: const Text('Open Attendance Manager'),
           ),
         ],
       ),

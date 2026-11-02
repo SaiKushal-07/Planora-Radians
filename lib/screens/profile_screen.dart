@@ -191,7 +191,7 @@ class ProfileScreen extends StatelessWidget {
                       label: '${appState.attendanceTarget.round()}%',
                       onChanged: (v) => appState.setAttendanceTarget(v.roundToDouble()),
                     ),
-                    const Text('Used by the Bunk Calculator and attendance summary.',
+                    const Text('Used by the Attendance Manager and attendance summary.',
                         style: TextStyle(fontSize: 12.5, color: AppColors.muted)),
                   ],
                 ),
@@ -216,7 +216,7 @@ class ProfileScreen extends StatelessWidget {
                     const Divider(height: 1),
                     ListTile(
                       leading: const Icon(Icons.calculate_rounded, color: AppColors.primary),
-                      title: const Text('Bunk Calculator',
+                      title: const Text('Attendance Manager',
                           style: TextStyle(fontWeight: FontWeight.w700)),
                       subtitle: const Text('How many classes can you safely miss?'),
                       trailing: const Icon(Icons.chevron_right_rounded),
