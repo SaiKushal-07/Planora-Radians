@@ -30,14 +30,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
+
     setState(() {
       _loading = true;
       _error = null;
     });
-    await Future.delayed(const Duration(milliseconds: 600)); // fake network
-    final err = appState.login(_id.text, _pw.text);
+
+    final err = await appState.login(_id.text.trim(), _pw.text);
+
     if (!mounted) return;
-    // On success the root widget swaps this screen for the main app.
+
     if (err != null) {
       setState(() {
         _loading = false;
@@ -46,10 +48,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _useDemo() {
+  Future<void> _useDemo() async {
     _id.text = AppState.demoEmail;
     _pw.text = AppState.demoPassword;
-    _login();
+    await _login();
   }
 
   @override
@@ -78,26 +80,38 @@ class _LoginScreenState extends State<LoginScreen> {
                             end: Alignment.bottomRight,
                           ),
                         ),
-                        child: const Icon(Icons.school_rounded, color: Colors.white, size: 40),
+                        child: const Icon(
+                          Icons.school_rounded,
+                          color: Colors.white,
+                          size: 40,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text('CampusPulse',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800)),
+                    const Text(
+                      'CampusPulse',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    const Text('Your smart campus companion',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.muted)),
+                    const Text(
+                      'Your smart campus companion',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.muted),
+                    ),
                     const SizedBox(height: 28),
                     AppTextField(
                       controller: _id,
-                      label: 'Email or username',
+                      label: 'Email',
                       icon: Icons.person_outline_rounded,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      validator: (v) =>
-                          (v == null || v.trim().isEmpty) ? 'Enter your email or username' : null,
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? 'Enter your email'
+                          : null,
                     ),
                     AppTextField(
                       controller: _pw,
@@ -107,46 +121,72 @@ class _LoginScreenState extends State<LoginScreen> {
                       textInputAction: TextInputAction.done,
                       onSubmitted: (_) => _login(),
                       suffix: IconButton(
-                        icon: Icon(_hide ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                        icon: Icon(
+                          _hide
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
                         onPressed: () => setState(() => _hide = !_hide),
                       ),
-                      validator: (v) =>
-                          (v == null || v.isEmpty) ? 'Enter your password' : null,
+                      validator: (v) => (v == null || v.isEmpty)
+                          ? 'Enter your password'
+                          : null,
                     ),
                     if (_error != null)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: Text(_error!,
-                            style: const TextStyle(color: AppColors.danger, fontWeight: FontWeight.w600)),
+                        child: Text(
+                          _error!,
+                          style: const TextStyle(
+                            color: AppColors.danger,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const ForgotPasswordScreen(),
+                          ),
                         ),
                         child: const Text('Forgot password?'),
                       ),
                     ),
                     FilledButton(
-                      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size.fromHeight(52),
+                      ),
                       onPressed: _loading ? null : _login,
                       child: _loading
                           ? const SizedBox(
                               width: 22,
                               height: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
                             )
-                          : const Text('Log in', style: TextStyle(fontSize: 16)),
+                          : const Text(
+                              'Log in',
+                              style: TextStyle(fontSize: 16),
+                            ),
                     ),
                     const SizedBox(height: 12),
                     OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-                      onPressed: _loading ? null : () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(52),
                       ),
+                      onPressed: _loading
+                          ? null
+                          : () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const RegisterScreen(),
+                                ),
+                              ),
                       icon: const Icon(Icons.person_add_alt_1_rounded),
                       label: const Text('Create an account'),
                     ),
@@ -158,19 +198,36 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           const Row(
                             children: [
-                              Icon(Icons.science_rounded, color: AppColors.primary, size: 20),
+                              Icon(
+                                Icons.science_rounded,
+                                color: AppColors.primary,
+                                size: 20,
+                              ),
                               SizedBox(width: 8),
-                              Text('Demo account',
-                                  style: TextStyle(fontWeight: FontWeight.w800, color: AppColors.primary)),
+                              Text(
+                                'Demo account',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.primary,
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 8),
-                          const Text('Backend is not connected yet. Use the demo login to explore the app with sample data.',
-                              style: TextStyle(fontSize: 12.5, color: AppColors.muted)),
+                          const Text(
+                            'Use the demo login to explore the app with sample data.',
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              color: AppColors.muted,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           const SelectableText(
                             'Email: ${AppState.demoEmail}\nPassword: ${AppState.demoPassword}',
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           const SizedBox(height: 10),
                           FilledButton.tonal(

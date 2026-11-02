@@ -19,6 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _username = TextEditingController();
   final _pw = TextEditingController();
   final _pw2 = TextEditingController();
+
   String? _dept;
   String? _sem;
   bool _tried = false;
@@ -38,24 +39,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _submit() async {
     setState(() => _tried = true);
-    if (!_formKey.currentState!.validate() || _dept == null || _sem == null) return;
+
+    if (!_formKey.currentState!.validate() || _dept == null || _sem == null) {
+      return;
+    }
+
     setState(() => _loading = true);
-    await Future.delayed(const Duration(milliseconds: 600));
-    final err = appState.register(Student(
+
+    final student = Student(
       name: _name.text.trim(),
       email: _email.text.trim(),
       username: _username.text.trim(),
-      password: _pw.text,
       usn: _usn.text.trim().toUpperCase(),
       department: _dept!,
       semester: int.parse(_sem!),
-    ));
+    );
+
+    final err = await appState.register(student, _pw.text);
+
     if (!mounted) return;
+
     if (err != null) {
       setState(() => _loading = false);
       showSnack(context, err);
     } else {
-      // Signed in -> root swaps to the main app; remove this page.
       Navigator.of(context).popUntil((r) => r.isFirst);
     }
   }
@@ -77,8 +84,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     const Padding(
                       padding: EdgeInsets.only(bottom: 16),
-                      child: Text('Student details',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.muted)),
+                      child: Text(
+                        'Student details',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.muted,
+                        ),
+                      ),
                     ),
                     AppTextField(
                       controller: _name,
@@ -101,21 +114,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       icon: Icons.apartment_rounded,
                       value: _dept,
                       options: departments,
-                      errorText: _tried && _dept == null ? 'Select your department' : null,
+                      errorText: _tried && _dept == null
+                          ? 'Select your department'
+                          : null,
                       onChanged: (v) => setState(() => _dept = v),
                     ),
                     PickerField(
                       label: 'Semester',
                       icon: Icons.layers_outlined,
                       value: _sem == null ? null : 'Semester $_sem',
-                      options: [for (var i = 1; i <= 8; i++) 'Semester $i'],
-                      errorText: _tried && _sem == null ? 'Select your semester' : null,
-                      onChanged: (v) => setState(() => _sem = v.replaceAll('Semester ', '')),
+                      options: [
+                        for (var i = 1; i <= 8; i++) 'Semester $i',
+                      ],
+                      errorText: _tried && _sem == null
+                          ? 'Select your semester'
+                          : null,
+                      onChanged: (v) => setState(
+                        () => _sem = v.replaceAll('Semester ', ''),
+                      ),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 6, bottom: 16),
-                      child: Text('Account',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.muted)),
+                      child: Text(
+                        'Account',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.muted,
+                        ),
+                      ),
                     ),
                     AppTextField(
                       controller: _email,
@@ -126,7 +153,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validator: (v) {
                         final s = v?.trim() ?? '';
                         if (s.isEmpty) return 'Enter your email';
-                        if (!s.contains('@') || !s.contains('.')) return 'Enter a valid email';
+                        if (!s.contains('@') || !s.contains('.')) {
+                          return 'Enter a valid email';
+                        }
                         return null;
                       },
                     ),
@@ -149,11 +178,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       obscure: _hide,
                       textInputAction: TextInputAction.next,
                       suffix: IconButton(
-                        icon: Icon(_hide ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                        icon: Icon(
+                          _hide
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
                         onPressed: () => setState(() => _hide = !_hide),
                       ),
-                      validator: (v) =>
-                          (v == null || v.length < 6) ? 'At least 6 characters' : null,
+                      validator: (v) => (v == null || v.length < 6)
+                          ? 'At least 6 characters'
+                          : null,
                     ),
                     AppTextField(
                       controller: _pw2,
@@ -162,19 +196,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       obscure: _hide,
                       textInputAction: TextInputAction.done,
                       onSubmitted: (_) => _submit(),
-                      validator: (v) => v != _pw.text ? 'Passwords do not match' : null,
+                      validator: (v) =>
+                          v != _pw.text ? 'Passwords do not match' : null,
                     ),
                     const SizedBox(height: 4),
                     FilledButton(
-                      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size.fromHeight(52),
+                      ),
                       onPressed: _loading ? null : _submit,
                       child: _loading
                           ? const SizedBox(
                               width: 22,
                               height: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
                             )
-                          : const Text('Sign up', style: TextStyle(fontSize: 16)),
+                          : const Text(
+                              'Sign up',
+                              style: TextStyle(fontSize: 16),
+                            ),
                     ),
                   ],
                 ),

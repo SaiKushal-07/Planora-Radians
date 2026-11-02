@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'app_state.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
 import 'theme.dart';
+import 'firebase_options.dart';
 
-void main() => runApp(const CampusPulseApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(const CampusPulseApp());
+}
 
 class CampusPulseApp extends StatelessWidget {
   const CampusPulseApp({super.key});
@@ -16,7 +26,6 @@ class CampusPulseApp extends StatelessWidget {
       title: 'CampusPulse',
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
-      // Auth gate: login screen until a user is signed in, then the 4-tab shell.
       home: ListenableBuilder(
         listenable: appState,
         builder: (context, _) =>
